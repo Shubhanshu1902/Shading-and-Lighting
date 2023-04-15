@@ -16,16 +16,14 @@ export const gouroudV = `
         float ks;
         vec3 specularColor;
         float shininess;
+        bool on;
         };
 
-    uniform LightSource light;
+    uniform LightSource light1;
+    uniform LightSource light2;
+    uniform LightSource light3;
 
-    void main(){
-        vec4 vertPos4 = modelViewMatrix * vec4(position,1.0);
-        vPos = vec3(vertPos4)/vertPos4.w;
-        vNormal = normalMatrix * normal;
-        gl_Position = projectionMatrix * vertPos4; 
-
+    vec4 intensity(LightSource light){
         // Ambient Intensity
         vec3 Ia = light.ka * light.ambientColor;
         
@@ -47,8 +45,26 @@ export const gouroudV = `
             specular = pow(A_spec,light.shininess);
         }
         vec3 Is = light.ks * specular * light.specularColor;
-        
-        vColor = vec4(Ia + Id + Is, 1.0);   
+        return vec4(Ia + Id + Is, 1.0);
+    }
+
+    void main(){
+        vec4 vertPos4 = modelViewMatrix * vec4(position,1.0);
+        vPos = vec3(vertPos4)/vertPos4.w;
+        vNormal = normalMatrix * normal;
+        gl_Position = projectionMatrix * vertPos4; 
+
+        if(light1.on){
+            vColor += intensity(light1);
+        }
+                
+        if(light2.on){
+            vColor += intensity(light2);
+        }
+
+        if(light3.on){
+            vColor += intensity(light3);
+        }
     }
 `;
 
@@ -67,13 +83,10 @@ export const gouroudPhongBingV = `
         float ks;
         vec3 specularColor;
         float shininess;
-        };
-    uniform LightSource light;
-    void main(){
-        vec4 vertPos4 = modelViewMatrix * vec4(position,1.0);
-        vPos = vec3(vertPos4)/vertPos4.w;
-        vNormal = normalMatrix * normal;
-        gl_Position = projectionMatrix * vertPos4; 
+        bool on;
+    };
+
+    vec4 intensity(LightSource light){
         // Ambient Intensity
         vec3 Ia = light.ka * light.ambientColor;
         
@@ -92,8 +105,30 @@ export const gouroudPhongBingV = `
             specular = pow(A_spec,light.shininess);
         }
         vec3 Is = light.ks * specular * light.specularColor;
-        
-        vColor = vec4(Ia + Id + Is, 1.0);   
+        return vec4(Ia + Id + Is, 1.0);
+    }
+
+    uniform LightSource light1;
+    uniform LightSource light2;
+    uniform LightSource light3;
+
+    void main(){
+        vec4 vertPos4 = modelViewMatrix * vec4(position,1.0);
+        vPos = vec3(vertPos4)/vertPos4.w;
+        vNormal = normalMatrix * normal;
+        gl_Position = projectionMatrix * vertPos4; 
+    
+        if(light1.on){
+            vColor += intensity(light1);
+        }
+                    
+        if(light2.on){
+            vColor += intensity(light2);
+        }
+
+        if(light3.on){
+            vColor += intensity(light3);
+        }
     }
 `;
 
