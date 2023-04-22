@@ -12,7 +12,8 @@
     "deploy": "gh-pages -d build"
   },
   "devDependencies": {
-    "vite": "^4.2.0"
+    "vite": "^4.2.0",
+    "vite-plugin-glsl": "^1.1.2"
   },
   "dependencies": {
     "dat.gui": "^0.7.9",

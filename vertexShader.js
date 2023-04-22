@@ -1,39 +1,42 @@
 export const gouroudV = `
     precision mediump float;
+    #define MAX_LIGHTS 10
 
     //Output
     varying vec4 vColor;
     varying vec3 vPos;
     varying vec3 vNormal;
 
+    struct objectProp{
+        float ka;
+        float kd;
+        float ks;
+        float shininess;
+    };
 
     struct LightSource{
         vec3 lightPos;
-        float ka;
         vec3 ambientColor;
-        float kd;
         vec3 diffuseColor;
-        float ks;
         vec3 specularColor;
-        float shininess;
         bool on;
-        };
+    };
 
-    uniform LightSource light1;
-    uniform LightSource light2;
-    uniform LightSource light3;
+    uniform int n;
+    uniform objectProp objProperties;
+    uniform LightSource lights[10];
 
     vec4 intensity(LightSource light){
         // Ambient Intensity
-        vec3 Ia = light.ka * light.ambientColor;
-        
+        vec3 Ia = objProperties.ka * light.ambientColor;
+
         vec3 N = normalize(vNormal);
         vec3 L = normalize(light.lightPos - vPos);
         float lambertian = max(dot(N,L),0.0);
-        
+
         //Diffuse Intensity
-        vec3 Id = light.kd * lambertian * light.diffuseColor;
-        
+        vec3 Id = objProperties.kd * lambertian * light.diffuseColor;
+
         // Specular intensity
         float specular = 0.0;
         if (lambertian > 0.0){
@@ -42,9 +45,9 @@ export const gouroudV = `
             // vector to viewer
             vec3 V = normalize(-vPos);
             float A_spec = max(dot(R,V),0.0);
-            specular = pow(A_spec,light.shininess);
+            specular = pow(A_spec,objProperties.shininess);
         }
-        vec3 Is = light.ks * specular * light.specularColor;
+        vec3 Is = objProperties.ks * specular * light.specularColor;
         return vec4(Ia + Id + Is, 1.0);
     }
 
@@ -54,83 +57,75 @@ export const gouroudV = `
         vNormal = normalMatrix * normal;
         gl_Position = projectionMatrix * vertPos4; 
 
-        if(light1.on){
-            vColor += intensity(light1);
-        }
-                
-        if(light2.on){
-            vColor += intensity(light2);
-        }
-
-        if(light3.on){
-            vColor += intensity(light3);
+        for(int i = 0; i < n; i++){
+            if(lights[i].on)
+                vColor += intensity(lights[i]);
         }
     }
-`;
+`
 
 export const gouroudPhongBingV = `
     precision mediump float;
+    #define MAX_LIGHT 10 
+
     //Output
     varying vec4 vColor;
     varying vec3 vPos;
     varying vec3 vNormal;
+
+    struct objectProp{
+        float ka;
+        float kd;
+        float ks;
+        float shininess;
+    };
+
     struct LightSource{
         vec3 lightPos;
-        float ka;
         vec3 ambientColor;
-        float kd;
         vec3 diffuseColor;
-        float ks;
         vec3 specularColor;
-        float shininess;
         bool on;
     };
 
+    uniform int n;
+    uniform objectProp objProperties;
+    uniform LightSource lights[MAX_LIGHT];
+
     vec4 intensity(LightSource light){
         // Ambient Intensity
-        vec3 Ia = light.ka * light.ambientColor;
-        
+        vec3 Ia = objProperties.ka * light.ambientColor;
+
         vec3 N = normalize(vNormal);
         vec3 L = normalize(light.lightPos - vPos);
         float lambertian = max(dot(N,L),0.0);
-        
+
         //Diffuse Intensity
-        vec3 Id = light.kd * lambertian * light.diffuseColor;
-        
+        vec3 Id = objProperties.kd * lambertian * light.diffuseColor;
+
         // Specular intensity
         float specular = 0.0;
         if (lambertian > 0.0){
             vec3 H = normalize(L + vPos);
             float A_spec = max(dot(H,normalize(-vNormal)),0.0);
-            specular = pow(A_spec,light.shininess);
+            specular = pow(A_spec,objProperties.shininess);
         }
-        vec3 Is = light.ks * specular * light.specularColor;
+        vec3 Is = objProperties.ks * specular * light.specularColor;
         return vec4(Ia + Id + Is, 1.0);
     }
-
-    uniform LightSource light1;
-    uniform LightSource light2;
-    uniform LightSource light3;
 
     void main(){
         vec4 vertPos4 = modelViewMatrix * vec4(position,1.0);
         vPos = vec3(vertPos4)/vertPos4.w;
         vNormal = normalMatrix * normal;
         gl_Position = projectionMatrix * vertPos4; 
-    
-        if(light1.on){
-            vColor += intensity(light1);
-        }
-                    
-        if(light2.on){
-            vColor += intensity(light2);
-        }
 
-        if(light3.on){
-            vColor += intensity(light3);
+        for(int i = 0; i < n; i++){
+            if(lights[i].on)
+                vColor += intensity(lights[i]);
         }
     }
-`;
+`
 
 export const phongV = `
     varying vec3 vNormal;
@@ -143,4 +138,4 @@ export const phongV = `
         vNormal = normalMatrix * normal;
         gl_Position = projectionMatrix * temp; 
     }
-`;
+`

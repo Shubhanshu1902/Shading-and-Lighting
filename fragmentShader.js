@@ -7,27 +7,33 @@ export const gouroudF = `
     }
 `
 
-export const phongF = `
+export const phongBlingF = `
     precision mediump float;
+    #define MAX_LIGHT 10
 
     varying vec3 vPos;
     varying vec3 vNormal;
+    varying vec3 sPos;
+
+    struct objectProp{
+        float ka;
+        float kd;
+        float ks;
+        float shininess;
+    };
 
     struct LightSource{
         vec3 lightPos;
-        float ka;
         vec3 ambientColor;
-        float kd;
         vec3 diffuseColor;
-        float ks;
         vec3 specularColor;
-        float shininess;
         bool on;
     };
 
-    uniform LightSource light1;
-    uniform LightSource light2;
-    uniform LightSource light3;
+    uniform int n;
+    uniform objectProp objProperties;
+    uniform LightSource lights[MAX_LIGHT];
+
 
     vec4 intensity(LightSource light){
         vec3 N = normalize(vNormal);
@@ -35,11 +41,68 @@ export const phongF = `
         float lambertian = max(dot(N,L),0.0);
         
         // Ambient Intensity
-        vec3 Ia = light.ka * light.ambientColor;
+        vec3 Ia = objProperties.ka * light.ambientColor;
         
         //Diffuse Intensity
-        vec3 Id = light.kd * lambertian * light.diffuseColor;
+        vec3 Id = objProperties.kd * lambertian * light.diffuseColor;
         
+        // Specular intensity
+        float specular = 0.0;
+        if (lambertian > 0.0){
+            //reflected light L
+            vec3 H = normalize(vPos + L);
+            float A_spec = max(dot(H,normalize(-vNormal)),0.0);
+            specular = pow(A_spec,objProperties.shininess);
+        }
+        vec3 Is = objProperties.ks * specular * light.specularColor;
+        return vec4(Ia + Id + Is, 1.0);
+    }
+
+    void main(){
+        for(int i = 0; i < n; i++){
+            gl_FragColor += intensity(lights[i]);
+        }
+        gl_FragColor.a = 1.0;
+    }
+`
+
+export const phongF = `
+    precision mediump float;
+    #define MAX_LIGHT 10
+
+    varying vec3 vPos;
+    varying vec3 vNormal;
+
+    struct objectProp{
+        float ka;
+        float kd;
+        float ks;
+        float shininess;
+    };
+
+    struct LightSource{
+        vec3 lightPos;
+        vec3 ambientColor;
+        vec3 diffuseColor;
+        vec3 specularColor;
+        bool on;
+    };
+
+    uniform int n;
+    uniform objectProp objProperties;
+    uniform LightSource lights[MAX_LIGHT]; 
+
+    vec4 intensity(LightSource light){
+        vec3 N = normalize(vNormal);
+        vec3 L = normalize(light.lightPos - vPos);
+        float lambertian = max(dot(N,L),0.0);
+
+        // Ambient Intensity
+        vec3 Ia = objProperties.ka * light.ambientColor;
+
+        //Diffuse Intensity
+        vec3 Id = objProperties.kd * lambertian * light.diffuseColor;
+
         // Specular intensity
         float specular = 0.0;
         if (lambertian > 0.0){
@@ -48,87 +111,17 @@ export const phongF = `
             // vector to viewer
             vec3 V = normalize(-vPos);
             float A_spec = max(dot(R,V),0.0);
-            specular = pow(A_spec,light.shininess);
+            specular = pow(A_spec,objProperties.shininess);
         }
-        vec3 Is = light.ks * specular * light.specularColor;
+        vec3 Is = objProperties.ks * specular * light.specularColor;
         return vec4(Ia + Id + Is, 1.0);  
     }
 
     void main(){
-        if(light1.on){
-            gl_FragColor += intensity(light1);
-        }
-            
-        if(light2.on){
-            gl_FragColor += intensity(light2);
-        }
-
-        if(light3.on){
-            gl_FragColor += intensity(light3);
+        for(int i = 0; i < n; i++){
+            if(lights[i].on)
+                gl_FragColor += intensity(lights[i]);
         }
         gl_FragColor.a = 1.0; 
-    }
-`
-
-export const phongBlingF = `
-    precision mediump float;
-
-    varying vec3 vPos;
-    varying vec3 vNormal;
-    varying vec3 sPos;
-
-    struct LightSource{
-        vec3 lightPos;
-        float ka;
-        vec3 ambientColor;
-        float kd;
-        vec3 diffuseColor;
-        float ks;
-        vec3 specularColor;
-        float shininess;
-        bool on;
-    };
-
-    uniform LightSource light1;
-    uniform LightSource light2;
-    uniform LightSource light3;
-
-
-    vec4 intensity(LightSource light){
-        vec3 N = normalize(vNormal);
-        vec3 L = normalize(light.lightPos - vPos);
-        float lambertian = max(dot(N,L),0.0);
-        
-        // Ambient Intensity
-        vec3 Ia = light.ka * light.ambientColor;
-        
-        //Diffuse Intensity
-        vec3 Id = light.kd * lambertian * light.diffuseColor;
-        
-        // Specular intensity
-        float specular = 0.0;
-        if (lambertian > 0.0){
-            //reflected light L
-            vec3 H = normalize(vPos + L);
-            float A_spec = max(dot(H,normalize(-vNormal)),0.0);
-            specular = pow(A_spec,light.shininess);
-        }
-        vec3 Is = light.ks * specular * light.specularColor;
-        return vec4(Ia + Id + Is, 1.0);
-    }
-
-    void main(){
-        if(light1.on){
-            gl_FragColor += intensity(light1);
-        }
-        
-        if(light2.on){
-            gl_FragColor += intensity(light2);
-        }
-        
-        if(light3.on){
-            gl_FragColor += intensity(light3);
-        }
-        gl_FragColor.a = 1.0;
     }
 `

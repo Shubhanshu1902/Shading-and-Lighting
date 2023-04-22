@@ -19,48 +19,97 @@ let Shading = {
     Lighting: "Default",
 };
 
-let uniforms = {
-    light1: {
-        value: {
-            lightPos: new THREE.Vector3(0, 0, 0),
-            ka: 1,
-            ambientColor: new THREE.Color("#341900"),
-            kd: 1,
-            diffuseColor: new THREE.Color("#CC6600"),
-            ks: 1,
-            specularColor: new THREE.Color("#ffffff"),
-            shininess: 80,
-            on: true,
-        },
-    },
-    light2: {
-        value: {
-            lightPos: new THREE.Vector3(0, 0, 0),
-            ka: 1,
-            ambientColor: new THREE.Color("#341900"),
-            kd: 1,
-            diffuseColor: new THREE.Color("#CC6600"),
-            ks: 1,
-            specularColor: new THREE.Color("#ffffff"),
-            shininess: 80,
-            on: true,
-        },
-    },
-    light3: {
-        value: {
-            lightPos: new THREE.Vector3(0, 0, 0),
-            ka: 1,
-            ambientColor: new THREE.Color("#341900"),
-            kd: 1,
-            diffuseColor: new THREE.Color("#CC6600"),
-            ks: 1,
-            specularColor: new THREE.Color("#ffffff"),
-            shininess: 80,
-            on: true,
-        },
+let objProperties = {
+    value: {
+        ka: 1,
+        kd: 1,
+        ks: 1,
+        shininess: 80,
     },
 };
 
+let light = [
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: true,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: true,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: true,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    {
+        lightPos: new THREE.Vector3(0, 0, 0),
+        ambientColor: new THREE.Color("#341900"),
+        diffuseColor: new THREE.Color("#CC6600"),
+        specularColor: new THREE.Color("#ffffff"),
+        on: false,
+    },
+    
+]
+
+
+let uniforms = {
+    n: { value: 3 },
+    objProperties: objProperties,
+    lights: { value: light },
+};
+
+//TODO: Different Geometries
 const getObject = (uniforms, vShader, fShader) => {
     // const geometry = new THREE.CapsuleGeometry(3, 6, 8, 8);
     const geometry = new THREE.SphereGeometry(4, 256);
@@ -127,182 +176,76 @@ objectGUI
     .setValue("Gouraud");
 
 objectGUI.add(props, "ka", 0, 1).onChange(v => {
-    uniforms.light1.value.ka = v;
-    uniforms.light2.value.ka = v;
-    uniforms.light3.value.ka = v;
+    objProperties.value.ka = v
 });
 objectGUI.add(props, "kd", 0, 1).onChange(v => {
-    uniforms.light1.value.kd = v;
-    uniforms.light2.value.kd = v;
-    uniforms.light3.value.kd = v;
+    objProperties.value.kd = v
 });
 objectGUI.add(props, "ks", 0, 1).onChange(v => {
-    uniforms.light1.value.ks = v;
-    uniforms.light2.value.ks = v;
-    uniforms.light3.value.ks = v;
+    objProperties.value.ks = v
 });
 objectGUI.add(props, "shininess", 1, 128).onChange(v => {
-    uniforms.light1.value.shininess = v;
-    uniforms.light2.value.shininess = v;
-    uniforms.light3.value.shininess = v;
+    light.lobjProperties.value.shininess = v
 });
 objectGUI
     .add(Shading, "Lighting", ["Default", "Blinn-Phong"])
     .onChange(() => getShader())
     .setValue("Default");
 
-// Light 1
-const lightProp1 = gui.addFolder("Light Properties 1");
-let settings1 = {
-    ambientColor: "#341900",
-    diffuseColor: "#CC6600",
-    specularColor: "#ffffff",
-    switch: true,
-    x: 0,
-    y: 0,
-    z: 0,
-};
-lightProp1.add(settings1, "switch").onChange(c => {
-    uniforms.light1.value.on = c;
-});
-lightProp1.addColor(settings1, "ambientColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light1.value.ambientColor = c1;
-});
-lightProp1.addColor(settings1, "diffuseColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light1.value.diffuseColor = c1;
-});
-lightProp1.addColor(settings1, "specularColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light1.value.specularColor = c1;
-});
 
-lightProp1
-    .add(settings1, "x", -10, 10)
-    .step(0.1)
-    .onChange(x => {
-        var t1 = new THREE.Vector3(x, settings1.y, settings1.z);
-        uniforms.light1.value.lightPos = t1;
+for(let i = 1;i <= uniforms.n.value; i++){
+    const l = gui.addFolder("Lighting Properties " + i);
+    let settings = {
+        ambientColor: "#341900",
+        diffuseColor: "#CC6600",
+        specularColor: "#ffffff",
+        switch: true,
+        x: 0,
+        y: 0,
+        z: 0,
+    };
+
+    l.add(settings,"switch").onChange(c => {
+        light[i].on = c
+    })
+
+    l.addColor(settings, "ambientColor").onChange(c => {
+        var c1 = new THREE.Color(c);
+        light[i].ambientColor = c1;
     });
-
-lightProp1
-    .add(settings1, "y", -10, 10)
-    .step(0.1)
-    .onChange(y => {
-        var t1 = new THREE.Vector3(settings1.x, y, settings1.z);
-        uniforms.light1.value.lightPos = t1;
+    l.addColor(settings, "diffuseColor").onChange(c => {
+        var c1 = new THREE.Color(c);
+        light[i].diffuseColor = c1;
     });
-
-lightProp1
-    .add(settings1, "z", -10, 10)
-    .step(0.1)
-    .onChange(z => {
-        var t1 = new THREE.Vector3(settings1.x, settings1.y, z);
-        uniforms.light1.value.lightPos = t1;
+    l.addColor(settings, "specularColor").onChange(c => {
+        var c1 = new THREE.Color(c);
+        light[i].specularColor = c1;
     });
-
-// light 2
-const lightProp2 = gui.addFolder("Light Properties 2");
-let settings2 = {
-    ambientColor: "#341900",
-    diffuseColor: "#CC6600",
-    specularColor: "#ffffff",
-    switch: true,
-    x: 0,
-    y: 0,
-    z: 0,
-};
-lightProp2.add(settings2, "switch").onChange(c => {
-    uniforms.light2.value.on = c;
-});
-lightProp2.addColor(settings2, "ambientColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light2.value.ambientColor = c1;
-});
-lightProp2.addColor(settings2, "diffuseColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light2.value.diffuseColor = c1;
-});
-lightProp2.addColor(settings2, "specularColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light2.value.specularColor = c1;
-});
-
-lightProp2
-    .add(settings2, "x", -10, 10)
-    .step(0.1)
-    .onChange(x => {
-        var t1 = new THREE.Vector3(x, settings2.y, settings2.z);
-        uniforms.light2.value.lightPos = t1;
-    });
-
-lightProp2
-    .add(settings2, "y", -10, 10)
-    .step(0.1)
-    .onChange(y => {
-        var t1 = new THREE.Vector3(settings2.x, y, settings2.z);
-        uniforms.light2.value.lightPos = t1;
-    });
-
-lightProp2
-    .add(settings2, "z", -10, 10)
-    .step(0.1)
-    .onChange(z => {
-        var t1 = new THREE.Vector3(settings2.x, settings2.y, z);
-        uniforms.light2.value.lightPos = t1;
-    });
-
-// Light 3
-const lightProp3 = gui.addFolder("Light Properties 3");
-let settings3 = {
-    ambientColor: "#341900",
-    diffuseColor: "#CC6600",
-    specularColor: "#ffffff",
-    switch: true,
-    x: 0,
-    y: 0,
-    z: 0,
-};
-lightProp3.add(settings3, "switch").onChange(c => {
-    uniforms.light3.value.on = c;
-});
-lightProp3.addColor(settings3, "ambientColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light3.value.ambientColor = c1;
-});
-lightProp3.addColor(settings3, "diffuseColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light3.value.diffuseColor = c1;
-});
-lightProp3.addColor(settings3, "specularColor").onChange(c => {
-    var c1 = new THREE.Color(c);
-    uniforms.light3.value.specularColor = c1;
-});
-
-lightProp3
-    .add(settings3, "x", -10, 10)
-    .step(0.1)
-    .onChange(x => {
-        var t1 = new THREE.Vector3(x, settings3.y, settings3.z);
-        uniforms.light3.value.lightPos = t1;
-    });
-
-lightProp3
-    .add(settings3, "y", -10, 10)
-    .step(0.1)
-    .onChange(y => {
-        var t1 = new THREE.Vector3(settings3.x, y, settings3.z);
-        uniforms.light3.value.lightPos = t1;
-    });
-
-lightProp3
-    .add(settings3, "z", -10, 10)
-    .step(0.1)
-    .onChange(z => {
-        var t1 = new THREE.Vector3(settings3.x, settings3.y, z);
-        uniforms.light3.value.lightPos = t1;
-    });
+    
+    l
+        .add(settings, "x", -10, 10)
+        .step(0.1)
+        .onChange(x => {
+            var t1 = new THREE.Vector3(x, settings.y, settings.z);
+            light[i].lightPos = t1;
+        });
+    
+    l
+        .add(settings, "y", -10, 10)
+        .step(0.1)
+        .onChange(y => {
+            var t1 = new THREE.Vector3(settings.x, y, settings.z);
+            light[i].lightPos = t1;
+        });
+    
+    l
+        .add(settings, "z", -10, 10)
+        .step(0.1)
+        .onChange(z => {
+            var t1 = new THREE.Vector3(settings.x, settings.y, z);
+            light[i].lightPos = t1;
+        });
+}
 
 // Renderer
 const canvas = document.querySelector(".webgl");
@@ -318,4 +261,5 @@ const loop = () => {
     renderer.render(scene, camera);
     window.requestAnimationFrame(loop);
 };
+
 loop();
