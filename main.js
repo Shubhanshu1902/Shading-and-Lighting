@@ -98,8 +98,7 @@ let light = [
         diffuseColor: new THREE.Color("#CC6600"),
         specularColor: new THREE.Color("#ffffff"),
         on: false,
-    },
-    
+    }  
 ]
 
 
@@ -193,8 +192,9 @@ objectGUI
     .setValue("Default");
 
 
-for(let i = 1;i <= uniforms.n.value; i++){
-    const l = gui.addFolder("Lighting Properties " + i);
+const gui2 = new GUI()
+for(let i = 0;i < uniforms.n.value; i++){
+    const l = gui2.addFolder("Lighting Properties " + (i+1));
     let settings = {
         ambientColor: "#341900",
         diffuseColor: "#CC6600",
