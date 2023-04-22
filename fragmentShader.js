@@ -1,9 +1,10 @@
 export const gouroudF = `
     precision mediump float;
     varying vec4 vColor;
+    uniform vec3 aColor;
 
     void main(){
-        gl_FragColor = vColor;
+        gl_FragColor = vec4(aColor,1.0) * vColor;
     }
 `
 
@@ -14,6 +15,7 @@ export const phongBlingF = `
     varying vec3 vPos;
     varying vec3 vNormal;
     varying vec3 sPos;
+    uniform vec3 aColor;
 
     struct objectProp{
         float ka;
@@ -60,15 +62,18 @@ export const phongBlingF = `
 
     void main(){
         for(int i = 0; i < n; i++){
-            gl_FragColor += intensity(lights[i]);
+            gl_FragColor +=  intensity(lights[i]);
         }
         gl_FragColor.a = 1.0;
+        gl_FragColor = gl_FragColor * vec4(aColor,1.0);
     }
 `
 
 export const phongF = `
     precision mediump float;
     #define MAX_LIGHT 10
+
+    uniform vec3 aColor;
 
     varying vec3 vPos;
     varying vec3 vNormal;
@@ -123,5 +128,6 @@ export const phongF = `
                 gl_FragColor += intensity(lights[i]);
         }
         gl_FragColor.a = 1.0; 
+        gl_FragColor = gl_FragColor * vec4(aColor,1.0);
     }
 `

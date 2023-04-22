@@ -98,14 +98,14 @@ let light = [
         diffuseColor: new THREE.Color("#CC6600"),
         specularColor: new THREE.Color("#ffffff"),
         on: false,
-    }  
-]
-
+    },
+];
 
 let uniforms = {
     n: { value: 3 },
     objProperties: objProperties,
     lights: { value: light },
+    aColor: { value: new THREE.Color("#ff33ff") },
 };
 
 //TODO: Different Geometries
@@ -168,6 +168,7 @@ let props = {
     kd: 1,
     ks: 1,
     shininess: 80,
+    ObjectColor: "#ff33ff",
 };
 objectGUI
     .add(Shading, "Shading", ["Gouraud", "Phong"])
@@ -175,26 +176,30 @@ objectGUI
     .setValue("Gouraud");
 
 objectGUI.add(props, "ka", 0, 1).onChange(v => {
-    objProperties.value.ka = v
+    objProperties.value.ka = v;
 });
 objectGUI.add(props, "kd", 0, 1).onChange(v => {
-    objProperties.value.kd = v
+    objProperties.value.kd = v;
 });
 objectGUI.add(props, "ks", 0, 1).onChange(v => {
-    objProperties.value.ks = v
+    objProperties.value.ks = v;
 });
 objectGUI.add(props, "shininess", 1, 128).onChange(v => {
-    light.lobjProperties.value.shininess = v
+    light.lobjProperties.value.shininess = v;
 });
 objectGUI
     .add(Shading, "Lighting", ["Default", "Blinn-Phong"])
     .onChange(() => getShader())
     .setValue("Default");
 
+objectGUI.addColor(props, "ObjectColor").onChange(c => {
+    var c1 = new THREE.Color(c);
+    uniforms.aColor.value = c1;
+});
 
-const gui2 = new GUI()
-for(let i = 0;i < uniforms.n.value; i++){
-    const l = gui2.addFolder("Lighting Properties " + (i+1));
+const gui2 = new GUI();
+for (let i = 0; i < uniforms.n.value; i++) {
+    const l = gui2.addFolder("Lighting Properties " + (i + 1));
     let settings = {
         ambientColor: "#341900",
         diffuseColor: "#CC6600",
@@ -205,9 +210,9 @@ for(let i = 0;i < uniforms.n.value; i++){
         z: 0,
     };
 
-    l.add(settings,"switch").onChange(c => {
-        light[i].on = c
-    })
+    l.add(settings, "switch").onChange(c => {
+        light[i].on = c;
+    });
 
     l.addColor(settings, "ambientColor").onChange(c => {
         var c1 = new THREE.Color(c);
@@ -221,25 +226,22 @@ for(let i = 0;i < uniforms.n.value; i++){
         var c1 = new THREE.Color(c);
         light[i].specularColor = c1;
     });
-    
-    l
-        .add(settings, "x", -10, 10)
+
+    l.add(settings, "x", -10, 10)
         .step(0.1)
         .onChange(x => {
             var t1 = new THREE.Vector3(x, settings.y, settings.z);
             light[i].lightPos = t1;
         });
-    
-    l
-        .add(settings, "y", -10, 10)
+
+    l.add(settings, "y", -10, 10)
         .step(0.1)
         .onChange(y => {
             var t1 = new THREE.Vector3(settings.x, y, settings.z);
             light[i].lightPos = t1;
         });
-    
-    l
-        .add(settings, "z", -10, 10)
+
+    l.add(settings, "z", -10, 10)
         .step(0.1)
         .onChange(z => {
             var t1 = new THREE.Vector3(settings.x, settings.y, z);
