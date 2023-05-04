@@ -6,7 +6,7 @@ import { gouroudF, phongBlingF, phongF } from "./fragmentShader";
 
 // Creating scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0065b3);
+scene.background = new THREE.Color(0x2e2e2e);
 
 // Window Sizes
 const constants = {

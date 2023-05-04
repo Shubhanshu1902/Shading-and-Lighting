@@ -4,6 +4,7 @@ export const gouroudF = `
     uniform vec3 aColor;
 
     void main(){
+        gl_FragColor = vec4(0,0,0,1);
         gl_FragColor = vec4(aColor,1.0) * vColor;
     }
 `
@@ -61,6 +62,7 @@ export const phongBlingF = `
     }
 
     void main(){
+        gl_FragColor = vec4(0,0,0,1);
         for(int i = 0; i < n; i++){
             gl_FragColor +=  intensity(lights[i]);
         }
@@ -123,6 +125,7 @@ export const phongF = `
     }
 
     void main(){
+        gl_FragColor = vec4(0,0,0,1);
         for(int i = 0; i < n; i++){
             if(lights[i].on)
                 gl_FragColor += intensity(lights[i]);
